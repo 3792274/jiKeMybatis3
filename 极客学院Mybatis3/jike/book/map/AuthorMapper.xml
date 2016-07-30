@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jike.book.map.Author"> 
+	 
+	 <!-- 事务测试 -->
+	 <insert id="insertAuthor" parameterType="Author" statementType="PREPARED">
+	 		insert into Author(USERID,REALNAME,IDCARD) 
+	 			VALUES(#{jikeUser.id},#{realname},#{IDCard})
+	 </insert>
+	
+	
+	
+	
+	<!-- 联合查询结果集映射      1.全字段赋值 -->
+	<resultMap id="JiKeAuthorResultMapByProperty" type="Author" >
+		<id property="id" column="AUTHOR.ID"/>    <!-- 表.字段 -->
+		<result property="realname" column="REALNAME"/>
+		<result property="IDCard" column="IDCARD"/>
+		<association property="jikeUser" javaType="JikeUser" column="USERID" >
+			<id property="id" column="JIKEUSER.ID"/> <!-- 表.字段 -->
+			<result property="username" column="USERNAME"/>
+			<result property="password" column="PASSWORD"/>
+		</association>
+	</resultMap>
+	
+	
+	<!-- 联合查询结果集映射      2.构造函数赋值 -->
+	<resultMap id="JiKeAuthorResultMapByConstructor" type="Author" >
+		<id property="id" column="AUTHOR.ID"/>    <!-- 表.字段 -->
+		<result property="realname" column="REALNAME"/>
+		<result property="IDCard" column="IDCARD"/>
+		<association property="jikeUser" javaType="JikeUser" column="USERID" >
+			<constructor>
+				<arg column="USERNAME" javaType="String"/>
+				<arg column="password" javaType="String"/>
+			</constructor>
+		</association>
+	</resultMap>
+	
+	
+	<!-- 使用上面2种方法定义的结果集类型查询 ，修改resultMap 切换2种不同的映射方法。 -->
+	<select id="selectAuthorJoin" resultMap="JiKeAuthorResultMapByConstructor">
+		SELECT *  FROM AUTHOR INNER JOIN JIKEUSER
+			ON JIKEUSER.ID = AUTHOR.USERID
+	</select>
+	
+	
+	
+	<!-- 联合查询 ，使用子查询映射 -->
+	<resultMap id="JiKeAuthorSubMap" type="Author" >
+		<id property="id" column="AUTHOR.ID"/>
+		<result property="realname" column="REALNAME"/>
+		<result property="IDCard" column="IDCARD"/>
+		<association property="jikeUser" column="USERID"
+					  javaType="JikeUser" select="jike.book.pojo.jikeUserMapper.findById">  <!-- 会把 Author中 USERID 传递给findById（）， 子查询引用的 -->
+		</association>
+	</resultMap>
+	<select id="selectAuthorJoinUseSubSelect" resultMap="JiKeAuthorSubMap">
+		SELECT * FROM AUTHOR		
+	</select>
+	
+	
+	
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jike.book.map.JiKeReader"> 
+	
+	
+	<!-- 通过设置的JiKeReader.money,动态拼装SQL查询，if -->
+	<select id="selectReaderMoney" resultType="jikeReader" parameterType="jikeReader"> <!-- 注意别名，定义在mybaties-config.xml 时候为小写 -->
+		select * from reader  where 1=1
+		 <if test="money!=null">
+		 	and money >#{money}
+		 </if>
+	</select>
+	
+
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

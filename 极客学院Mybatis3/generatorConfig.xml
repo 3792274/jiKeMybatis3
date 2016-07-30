@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	
+	<!--手动指定MySql驱动位置-->
+	<classPathEntry location="F:\00.Maven-Repository\mysql\mysql-connector-java\5.1.39\mysql-connector-java-5.1.39.jar" />
+
+	<context id="coreFrameWorkAction">
+	
+		<!-- UTF8防止数据库注释乱码 -->
+		<commentGenerator><property name="javaFileEncoding" value="UTF-8"/></commentGenerator> 
+		
+		<jdbcConnection connectionURL="jdbc:mysql:///mybatis3?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=true"
+		driverClass="com.mysql.jdbc.Driver"
+		password="12369"
+		userId="root" />
+		
+		<javaModelGenerator targetPackage="jike.book.pojo" targetProject="jiKeXueYuan\src" />
+		
+		<sqlMapGenerator targetPackage="jike.book.pojo" targetProject="jiKeXueYuan\src" />
+		
+		<javaClientGenerator targetPackage="jike.book.pojo" targetProject="jiKeXueYuan\src" type="XMLMAPPER" />
+		
+		<table schema="mybatis3" tableName="jikeUser">
+			<generatedKey column="id" sqlStatement="mysql" identity="true"/>
+			<!-- 当不能识别主键自增的情况 -->
+		</table>
+
+	</context>
+	
+</generatorConfiguration>
+<!--通过插件数据库逆向生成java相关代码的配置文件，注释文件不能放在头行。-->

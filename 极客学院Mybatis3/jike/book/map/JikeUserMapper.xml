@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jike.book.map.JikeUserMapper"> 
+	
+	<!-- 根据ID查询1个 -->
+	<select id="findById" resultType="jike.book.pojo.JikeUser" parameterType="int">
+		select * from jikeUser where id = #{id}
+	</select>
+	
+	
+	<!-- 插入 -->
+	<insert id="insertUser" parameterType="JikeUser" statementType="PREPARED" 
+			keyProperty="id" useGeneratedKeys="true">
+		insert into jikeuser(username,password) values (#{username},#{password})
+	</insert>
+	
+	
+	
+	<!-- 更新 -->
+	<update id="updateUser" parameterType="JikeUser" >
+		UPDATE JIKEUSER SET USERNAME=#{username,jdbcType=VARCHAR},
+		PASSWORD = #{password,jdbcType=VARCHAR}
+		WHERE ID = #{id,jdbcType=INTEGER}
+	</update>
+	
+	
+	<!-- 简单查询 -->
+	<select id="loginSelect" resultType="JikeUser" parameterType="hashmap">
+		select * from jikeuser where username = #{username} and
+		password = #{password}
+	</select>
+	
+	<!-- 通过对象属性传递参数 -->
+		<select id="login2" resultType="JikeUser" parameterType="JikeUser">
+		select * from jikeuser where username = #{username} and
+		password = #{password}
+	</select>
+	
+	
+	<!-- 查询所有记录 List -->
+	<select id="selectJiKeUserList" resultType="JikeUser">
+		select * from jikeuser
+	</select>
+	
+	
+	
+	<!-- resultMap 解决复杂映射查询时的映射问题 -->
+	<resultMap type="JikeUser" id="JiKeUserResultMapMap">
+		<id property="id" column="id"/>
+		<result property="username" column="username"/>
+		<result property="password" column="password"/>
+	</resultMap>
+	<select id="selectUsersUseResultMap" resultMap="JiKeUserResultMapMap">
+		select id,username,password from jikeuser
+	</select>
+	
+	
+	
+	<!--后加的，演示集合查询例子， 在JikeUser中新增加的一个List<Visit> -->
+	<resultMap id="visitMap" type="JikeUser" >
+		<id property="id" column="id"/>
+		<result property="username" column="USERNAME"/>
+		<collection property="visitList" javaType="ArrayList" column="VISITID" 
+					ofType="jike.book.pojo.Visit"> <!-- 集合中的类型 -->
+		<result property="visitID" column="VISITID"/> <!-- 数据库查询的结果集如复制给对象 -->
+		<result property="visitIP" column="VISITIP"/>
+		<result property="visitDate" column="VISITDATE"/>
+		</collection>
+	</resultMap>
+	<select id="selectVisit" resultMap="visitMap">
+		SELECT * from jikeuser INNER JOIN visit on jikeuser.id = visit.userID;
+	</select>
+	
+	
+	
+	
+	
+	<!-- SQL拼装，使用choose多路选择 拼装SQL,只能执行一个分支。-->
+	<select id="selectJiKeUserChoose" resultType="JikeUser" parameterType="JikeUser">
+		select * from jikeuser where 1=1
+		<choose>
+			<when test="username!=null">
+				and username like #{username}
+			</when>
+			<when test="id!=null">
+				and id = #{id}
+			</when>
+			<otherwise>
+				and password is not null
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	
+	
+	<!-- 动态SQL,where智能，去掉 and-->
+	<select id="selectJiKeUserWhere" resultType="JikeUser" parameterType="JikeUser">
+		select * from jikeuser  
+		<where>
+			<if test="username!=null">
+				and username like #{username}
+			</if>
+			<if test="id!=null">
+				and id = #{id}
+			</if>
+		</where>
+	</select>
+	
+	
+	<!-- 动态SQL,使用Trim代替where ,智能去掉 and-->
+	<select id="selectJiKeUserTrim" resultType="JikeUser" parameterType="JikeUser">
+		select * from jikeuser  
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="username!=null">
+				and username like #{username}
+			</if>
+			<if test="id!=null">
+				and id = #{id}
+			</if>
+		</trim>
+	</select>
+	
+	
+	
+	
+	
+	
+	<!-- 动态SQL Set 智能去掉逗号 -->
+	<update id="updateJiKeUserSet" parameterType="JikeUser">
+		update JIKEUSER
+		<set>
+			<if test="username !=null">username=#{username},</if>
+			<if test="password !=null">password=#{password},</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	
+	
+	
+	<!-- 动态SQL trim  代替Set -->
+	<update id="updateJiKeUserTrim" parameterType="JikeUser">
+		update JIKEUSER
+		<trim prefix="SET" suffixOverrides="," suffix="where id =#{id}">  <!-- 自动判断后缀是否加逗号，自动在语句结束后添加 where id = #{} -->
+			<if test="username !=null and username !='' ">username=#{username},</if>
+			<if test="password !=null and password !='' ">password=#{password},</if>
+		</trim>
+	</update>
+	
+	
+	
+	
+	<!-- 动态SQL foreach使用     WHERE id in ( ? , ? , ? ) -->
+	<select id="selectJiKeUserForeach" resultType="JikeUser" parameterType="list">
+		select * from jikeuser
+		<where>
+			id in
+				<foreach item="item" index="index" collection="list"  open="("  separator="," close=")">
+					#{item}
+				</foreach>
+		</where>
+		
+	</select>
+	
+	
+	<!-- 动态SQL froeach 使用 ,批量插入，赋值(参数是一个list) 实现语句：insert into jikeUser(username,password) values (?,?) , (?,?) , (?,?)  -->
+	<insert id="insertJiKeUserForeach">
+		insert into jikeUser(username,password) values
+		 <foreach item="item" index="key" collection="list" open="" separator="," close="">
+		 	(#{item.username},#{item.password})
+		 </foreach>
+	</insert>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

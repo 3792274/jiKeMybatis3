@@ -1,0 +1,101 @@
+1.所有的连接查询 都可以用子查询。（子查询n+1次）
+		SELECT *  FROM AUTHOR INNER JOIN JIKEUSER
+					ON JIKEUSER.ID = AUTHOR.USERID
+		
+		SELECT * FROM AUTHOR WHERE USERID IN(SELECT ID FROM JIKEUSER)
+		
+2.联合查询一次加载，占用资源大，子查询，mybatis中可以通过设置懒加载解决<setting>
+
+
+3.discriminator-鉴别器 (源自于动态SQL)
+javaType:字段对应的数据类型
+column:对应的字段
+case：根据字段的值选择不同的操作。
+<discriminator javaType="byte" column="gender">
+	<case value="1">
+	    (通过某一个字段的值，选择为部分字段赋值)
+		<result property="husband"  column="husband">
+	</case>	
+	<case value="2">
+	    <result property="wife"  column="wife">
+	</case>	
+</discriminator>
+
+4.where 标记 = 智能条件  (无需 where  1=1  and ....)
+	select * from jikeuser
+	<where>
+		<if test="username!=null">
+			username like #{username}
+		</if>
+		<if test="id!=null">
+			and id = #{id}  <!--智能的去掉and-->
+		</if>
+	</where>
+	
+5.set智能赋值，去掉的是,号
+	update jikeuser
+	<set>
+		<if test="username != null" > username = #{username},</if>
+		<if test="password != null" > password = #{password},</if>  <!--会智能去掉,号-->
+	</set>
+	
+6.trim标记，格式化
+	prefix		前位增加
+	suffix		后位增加
+	prefixOverides  自动判断前位
+	suffixOverrides 自动判断后位
+	
+	1.替换set
+		<trim prefix="SET"  suffix="WHERE id = #{id}"  suffixOverrides=",">
+			<if test="username!=null and username !='' ">
+				username = #{username},
+			</if>
+			.....
+		 </trim>
+		 
+    2.替换Where
+    	select * from jikeuser
+    	 <trim prefix="where"  prefixOverrides="and|or">
+			<if test="username!=null">
+				and username like #{username}
+			</if>
+			<if test="id!=null">
+				and id = #{id}
+			</if>
+			.....
+		 </trim>
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
