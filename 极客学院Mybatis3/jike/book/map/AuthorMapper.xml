@@ -53,7 +53,7 @@
 		<result property="realname" column="REALNAME"/>
 		<result property="IDCard" column="IDCARD"/>
 		<association property="jikeUser" column="USERID"
-					  javaType="JikeUser" select="jike.book.pojo.jikeUserMapper.findById">  <!-- 会把 Author中 USERID 传递给findById（）， 子查询引用的 -->
+					  javaType="JikeUser" select="jike.book.map.JikeUserMapper.findById">  <!-- 会把 Author中 USERID 传递给findById（）， 子查询引用的 -->
 		</association>
 	</resultMap>
 	<select id="selectAuthorJoinUseSubSelect" resultMap="JiKeAuthorSubMap">
