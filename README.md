@@ -21,11 +21,3 @@
 >1、[初识mybatis3](http://my.jikexueyuan.com/1109827607/record/)<br>
 
 
-
-
-## 联系方式
-qq:        3792274<br/>
-email:     <3792274@qq.com><br/>
-
-
- 
